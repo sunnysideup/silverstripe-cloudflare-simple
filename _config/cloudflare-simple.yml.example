@@ -1,1 +1,5 @@
-
+Sunnysideup\CloudflareSimple\CloudflarePurgeCache:
+  purge_hosts:
+    - 'example.com'
+    - 'test.example.com'
+    - 'stage.example.com'
