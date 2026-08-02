@@ -2,6 +2,7 @@
 
 namespace Sunnysideup\CloudflareSimple;
 
+use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Environment;
 use SilverStripe\Core\Flushable;
@@ -33,10 +34,12 @@ class CloudflarePurgeCache implements Flushable
         }
 
         $result = self::purgeCache($zoneId, $apiToken, $purgeHosts);
-        if ($result) {
-            echo self::craftMessage('Cloudflare cache purged successfully', $purgeHosts);
-        } else {
-            user_error(self::craftMessage('Failed to purge Cloudflare cache', $purgeHosts), E_USER_WARNING);
+        if (Director::is_cli()) {
+            if ($result) {
+                echo self::craftMessage('Cloudflare cache purged successfully', $purgeHosts);
+            } else {
+                user_error(self::craftMessage('Failed to purge Cloudflare cache', $purgeHosts), E_USER_WARNING);
+            }
         }
     }
 
