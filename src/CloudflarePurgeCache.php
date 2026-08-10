@@ -12,6 +12,11 @@ class CloudflarePurgeCache implements Flushable
     use Configurable;
 
     /**
+     * List of characters that cannot be part of the zone ID.
+     */
+    private const INVALID_ZONE_ID_CHARS = ['.', '/', '\\', '?', '#', '%'];
+
+    /**
      * Host names whose cache to be purged.
      *
      * @var string[]|null
@@ -29,8 +34,9 @@ class CloudflarePurgeCache implements Flushable
         if (!$zoneId || !$apiToken) {
             return;
         }
-        if (strpbrk($zoneId, './') !== false) {
+        if (!self::isValidZoneId($zoneId)) {
             user_error("Invalid zone ID: $zoneId", E_USER_ERROR);
+            return;
         }
 
         $result = self::purgeCache($zoneId, $apiToken, $purgeHosts);
@@ -76,5 +82,13 @@ class CloudflarePurgeCache implements Flushable
             Environment::getEnv('CLOUDFLARE_PURGE_ZONE_ID'),
             Environment::getEnv('CLOUDFLARE_PURGE_API_TOKEN'),
         ];
+    }
+
+    private static function isValidZoneId(string $zoneId): bool
+    {
+        return array_find(
+            self::INVALID_ZONE_ID_CHARS,
+            static fn (string $ch): bool => str_contains($zoneId, $ch)
+        ) === null;
     }
 }
