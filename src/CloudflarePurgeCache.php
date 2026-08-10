@@ -77,13 +77,4 @@ class CloudflarePurgeCache implements Flushable
             Environment::getEnv('CLOUDFLARE_PURGE_API_TOKEN'),
         ];
     }
-
-    private static function getHosts(): array
-    {
-        $hosts = Environment::getEnv('CLOUDFLARE_PURGE_HOSTS');
-        if (empty($hosts)) {
-            return [];
-        }
-        return array_map('trim', explode(',', $hosts));
-    }
 }
