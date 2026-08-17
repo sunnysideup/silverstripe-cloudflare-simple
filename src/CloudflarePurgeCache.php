@@ -86,9 +86,12 @@ class CloudflarePurgeCache implements Flushable
 
     private static function isValidZoneId(string $zoneId): bool
     {
-        return array_find(
-            self::INVALID_ZONE_ID_CHARS,
-            static fn (string $ch): bool => str_contains($zoneId, $ch)
-        ) === null;
+        foreach (self::INVALID_ZONE_ID_CHARS as $ch) {
+            if (str_contains($zoneId, $ch)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
